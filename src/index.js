@@ -8,7 +8,7 @@ router.get('/', async (ctx, next) => {
   console.log('beep boop beep');
   ctx.status = 200;
   ctx.body = {
-    hello: "wtf"
+    data: "wow"
   }
 });
  
