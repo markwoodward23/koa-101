@@ -1,0 +1,32 @@
+{
+  "name": "koa-101",
+  "version": "1.0.0",
+  "description": "A basic koa app",
+  "main": "index.js",
+  "author": "Mark Woodward",
+  "license": "MIT",
+  "private": false,
+  "engines": {
+    "node": ">= 10.13.0"
+  },
+  "scripts": {
+    "build": "rm -rf ./lib && ./node_modules/.bin/babel src --out-dir lib",
+    "start": "NODE_TLS_REJECT_UNAUTHORIZED=0 node lib/index.js",
+    "start:dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 ./node_modules/.bin/nodemon --exec ./node_modules/.bin/babel-node -- src/index.js"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.2.3",
+    "@babel/core": "7.3.3",
+    "@babel/node": "^7.0.0",
+    "@babel/plugin-proposal-object-rest-spread": "7.3.2",
+    "@babel/preset-env": "7.3.1",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "10.0.1",
+    "nodemon": "1.18.9"
+  },
+  "dependencies": {
+    "@koa/cors": "2.2.3",
+    "koa": "2.5.1",
+    "koa-router": "7.4.0"
+  }
+}
