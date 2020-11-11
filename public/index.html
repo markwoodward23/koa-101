@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <meta name="robots" content="noindex, nofollow" />
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>Crux API Viewer</title>
   <style type="text/css">
@@ -29,6 +30,20 @@
     .box-poor {
       background-color: hsl(359, 80%, 50%);
     }
+
+    h1 {
+      margin-bottom: 0px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      margin-top: 30px;
+    }
+
+    p {
+      margin-top: 0px;
+      margin-bottom: 5px;
+    }
   </style>
 </head>
 
@@ -36,6 +51,7 @@
   <div id="wrapper">
     <h1>Chrome User Experience Report</h1>
     <p>The field data collected over the last 28 days.</p>
+    <p>What are <a href="https://web.dev/vitals/"> Google's web vitals?</a></p>
   </div>
 
 
@@ -66,19 +82,29 @@
       }
     };
 
+    const metricInfo = {
+      CLS: 'good: <0.1, needs improvement: <0.25, poor: >0.25',
+      FCP: 'good: <1000ms, needs improvement: 1000-3000ms, poor: >3000ms',
+      FID: 'good: <100ms, needs improvement: 100-300ms, poor: >300ms',
+      LCP: 'good: <2500ms, needs improvement: 2500-4000ms, poor: >4000ms'
+    }
+
     function parseQuery(queryString) {
-        var query = {};
-        var pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
-        for (var i = 0; i < pairs.length; i++) {
-            var pair = pairs[i].split('=');
-            query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
-        }
-        return query;
+      var query = {};
+      var pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+      for (var i = 0; i < pairs.length; i++) {
+        var pair = pairs[i].split('=');
+        query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+      }
+      return query;
     }
 
     // Gather the data for example.com and display it
     (async function () {
-      const { url, apiKey } = parseQuery(window.location.search);
+      const {
+        url,
+        apiKey
+      } = parseQuery(window.location.search);
       console.log(url, apiKey);
       const json = await CrUXApiUtil.query({
         url
@@ -94,12 +120,19 @@
         const titleEl = document.createElement('h2');
         titleEl.textContent = metric.acronym;
 
+        const infoEl = createMetricInfo(metric.acronym);
         const [descEl, barsEl] = createDescriptionAndBars(metric.labeledBins);
 
-        metricEl.append(titleEl, descEl, barsEl);
+        metricEl.append(titleEl, infoEl, descEl, barsEl);
         document.getElementById('wrapper').append(metricEl);
       }
     })();
+
+    function createMetricInfo(acronym) {
+      const element = document.createElement('p');
+      element.textContent = metricInfo[acronym];
+      return element;
+    }
 
     /**
      * Utility method to transform the response's metric data into an array of usable metric objects
@@ -182,37 +215,6 @@
 
     //]]>
   </script>
-
-  <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent) {
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: ""
-      }], "*")
-    }
-
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
-  </script>
-
-  <script>
-    let allLines = []
-
-    window.addEventListener("message", (message) => {
-      if (message.data.console) {
-        let insert = document.querySelector("#insert")
-        allLines.push(message.data.console.payload)
-        insert.innerHTML = allLines.join(";\r")
-
-        let result = eval.call(null, message.data.console.payload)
-        if (result !== undefined) {
-          console.log(result)
-        }
-      }
-    })
-  </script>
-
 </body>
 
 </html>
